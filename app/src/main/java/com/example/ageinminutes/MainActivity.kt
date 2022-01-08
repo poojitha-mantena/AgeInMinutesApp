@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
+import java.text.SimpleDateFormat
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -25,10 +26,25 @@ class MainActivity : AppCompatActivity() {
         val month = myCalander.get(Calendar.MONTH)
         val day = myCalander.get(Calendar.DAY_OF_MONTH)
 
-        DatePickerDialog(this, DatePickerDialog.OnDateSetListener {
-                view, year, monthOfYear, dayOfMonth ->
-                Toast.makeText(this,"date works", Toast.LENGTH_LONG).show()
+        val dpd = DatePickerDialog(this, DatePickerDialog.OnDateSetListener {
+                view, year, month, day ->
 
-        }, year, month, day).show()
+            val selectedDate = "$day/${month+1}/$year"
+            tvSelectedDate.setText(selectedDate)
+
+            val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
+            val theDate = sdf.parse(selectedDate)
+
+            val selectedDateInMinutes = theDate.time/60000
+            val currentDate = sdf.parse(sdf.format(System.currentTimeMillis()))
+            val currentDateInMinutes = currentDate.time/60000
+            val AgeInMinutes = currentDateInMinutes-selectedDateInMinutes
+
+            tvAgeInMinutes.setText(AgeInMinutes.toString())
+
+           }, year, month, day)
+
+        dpd.datePicker.setMaxDate(Date().time-86400000)
+        dpd.show();
     }
 }
